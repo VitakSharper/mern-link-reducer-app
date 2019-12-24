@@ -38,4 +38,8 @@ schema.pre('save', async function (next) {
     next();
 });
 
+schema.methods.checkPwd = async function (candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
+
 module.exports = model('User', schema);
