@@ -1,4 +1,6 @@
 const {Schema, model, Types} = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const schema = new Schema({
     email: {
@@ -6,7 +8,8 @@ const schema = new Schema({
         trim: true,
         required: [true, 'Please provide your e-mail.'],
         unique: true,
-        lowercase: true
+        lowercase: true,
+        validate: [validator.isEmail, 'Please provide a valid e-mail.']
     },
     password: {
         type: String,
@@ -15,7 +18,24 @@ const schema = new Schema({
         minlength: 8,
         select: false
     },
-    links: [{type: Types.ObjectId, ref: 'Link'}]
+    passwordConfirm: {
+        type: String,
+        required: [true, 'Please confirm your password.'],
+        validate: {
+            validator: function (el) {
+                return el === this.password
+            },
+            message: 'Password are not the same.'
+        }
+    }
+    // links: [{type: Types.ObjectId, ref: 'Link'}]
+});
+
+schema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 12);
+    this.passwordConfirm = undefined;
+    next();
 });
 
 module.exports = model('User', schema);

@@ -4,20 +4,19 @@ exports.login = async (req, res, next) => {
 
 };
 
-exports.signup = async (req, res) => {
+exports.signup = async (req, res, next) => {
     try {
-        const {email, password} = req.body;
+        const {email, password, passwordConfirm} = req.body;
 
-        const candidateMail = await User.findOne({email});
-        if (candidateMail) {
-            return res.status(400).json({
-                message: 'User exists'
-            })
-        }
+        const newUser = await User.create({email, password, passwordConfirm});
 
+        res.status(201).json({
+            status: 'success',
+            user: newUser
+        });
     } catch (e) {
         res.status(500).json({
-            message: 'Something went wrong!'
+            message: e
         })
     }
 };
