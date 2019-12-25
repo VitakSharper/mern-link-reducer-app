@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const signToken = id => {
-    return jwt.sign({id}, config.get('jwt_secret'), {expiresIn: config.get('jwt_expires_in')});
+    return jwt.sign({id}, config.get('jwtSecret'), {expiresIn: config.get('jwtExpiresIn')});
 };
 
 exports.login = async (req, res, next) => {
