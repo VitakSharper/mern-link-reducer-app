@@ -1,3 +1,4 @@
+const {promisify} = require('util');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const config = require('config');
@@ -41,4 +42,21 @@ exports.signup = async (req, res, next) => {
             message: e
         })
     }
+};
+
+exports.protect = async (req, res, next) => {
+    let token;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+        res.status(401).json({
+            message: 'You are not logged in.'
+        })
+    }
+
+    const decoded = await promisify(jwt.verify)(token, config.get('jwt_secret'));
+    next();
 };
