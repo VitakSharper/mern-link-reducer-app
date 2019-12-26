@@ -1,7 +1,13 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {withRouter} from 'react-router-dom';
-import {Grid, Segment, Form, Input, Button, Label} from "semantic-ui-react";
+import {AuthContext} from "../context/AuthContext";
+
+
+import {Grid, Segment, Form, Input, Button, Label, Message} from "semantic-ui-react";
 import {useHttp} from "../hooks/http.hook";
+import useMessage from "../hooks/message.hook";
+
+import MessageHook from "../hooks/Message";
 
 const classes = {
     segment: {
@@ -11,13 +17,30 @@ const classes = {
 };
 
 const AuthPage = ({history}) => {
-    const {loading, error, request} = useHttp();
+    const auth = useContext(AuthContext);
+    const {loading, message, request, clearMessage} = useHttp();
+
+
     const [form, setForm] = useState({email: '', password: ''});
+
+    useEffect(() => {
+        setTimeout(() => {
+            clearMessage();
+        }, 5000);
+    }, [message, clearMessage]);
 
     const changeHandler = event => {
         setForm({...form, [event.target.name]: event.target.value})
     };
 
+    const signinHandler = async () => {
+        try {
+            const data = await request('/api/auth/signin', 'POST', {...form});
+            auth.signin(data.token);
+        } catch (e) {
+
+        }
+    };
 
     return (
         <Grid centered columns={2}>
@@ -26,7 +49,7 @@ const AuthPage = ({history}) => {
                     <Label as='p' color='blue' ribbon={'right'}>
                         Sign In
                     </Label>
-                    <Form>
+                    <Form onSubmit={signinHandler}>
                         <Form.Field
                             type={'email'}
                             control={Input}
@@ -58,6 +81,9 @@ const AuthPage = ({history}) => {
                                 onClick={() => history.push('/reg')}
                             />
                         </Button.Group>
+                        {
+                            message ? (<MessageHook message={message}/>) : ('')
+                        }
                     </Form>
                 </Segment>
             </Grid.Column>

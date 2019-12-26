@@ -7,7 +7,7 @@ const signToken = id => {
     return jwt.sign({id}, config.get('jwtSecret'), {expiresIn: config.get('jwtExpiresIn')});
 };
 
-exports.login = async (req, res, next) => {
+exports.signin = async (req, res, next) => {
     const {email, password} = req.body;
     if (!email || !password) {
         return res.status(400).json({message: 'Please provide email and password!'})
@@ -27,6 +27,7 @@ exports.login = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
     try {
+        console.log(req.body)
         const {email, password, passwordConfirm} = req.body;
         const newUser = await User.create({email, password, passwordConfirm});
 
