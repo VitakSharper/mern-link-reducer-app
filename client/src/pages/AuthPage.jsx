@@ -24,9 +24,7 @@ const AuthPage = ({history}) => {
     const [form, setForm] = useState({email: '', password: ''});
 
     useEffect(() => {
-        setTimeout(() => {
-            clearMessage();
-        }, 5000);
+        clearMessage();
     }, [message, clearMessage]);
 
     const changeHandler = event => {

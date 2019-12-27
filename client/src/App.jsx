@@ -6,6 +6,8 @@ import useAuth from "./hooks/auth.hook";
 
 import {AuthContext} from "./context/AuthContext";
 
+import NavBar from "./components/NavBar";
+
 
 function App() {
     const {token, userId, signout, signin} = useAuth();
@@ -13,6 +15,7 @@ function App() {
     const routes = useRoutes(isAuthenticated);
     return (
         <AuthContext.Provider value={{token, signin, signout, userId, isAuthenticated}}>
+            {isAuthenticated && <NavBar/>}
             <Container textAlign='justified'>
                 {routes}
             </Container>

@@ -11,8 +11,6 @@ const useAuth = () => {
 
         setToken(jwtToken);
         setUserId(id);
-        console.log('In hook: ', userId, token)
-
         localStorage.setItem('userData', JSON.stringify({userId: id, token: jwtToken}))
     }, []);
 
