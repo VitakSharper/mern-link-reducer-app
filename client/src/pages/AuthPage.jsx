@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {withRouter} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
 
 
@@ -7,7 +7,7 @@ import {Grid, Segment, Form, Input, Button, Label, Message} from "semantic-ui-re
 import {useHttp} from "../hooks/http.hook";
 import useMessage from "../hooks/message.hook";
 
-import MessageHook from "../hooks/Message";
+import MessageHook from "../hooks/Message.component";
 
 const classes = {
     segment: {
@@ -16,15 +16,16 @@ const classes = {
     }
 };
 
-const AuthPage = ({history}) => {
+const AuthPage = () => {
     const auth = useContext(AuthContext);
+    const history = useHistory();
     const {loading, message, request, clearMessage} = useHttp();
 
 
     const [form, setForm] = useState({email: '', password: ''});
 
     useEffect(() => {
-        clearMessage();
+        // clearMessage();
     }, [message, clearMessage]);
 
     const changeHandler = event => {
@@ -56,6 +57,7 @@ const AuthPage = ({history}) => {
                             placeholder='joe@schmoe.com'
                             required
                             onChange={changeHandler}
+                            value={form.email}
                         />
                         <Form.Field
                             type={'password'}
@@ -65,6 +67,7 @@ const AuthPage = ({history}) => {
                             placeholder='password'
                             required
                             onChange={changeHandler}
+                            value={form.password}
                         />
                         <Button.Group>
                             <Form.Field
@@ -88,4 +91,4 @@ const AuthPage = ({history}) => {
         </Grid>
     )
 };
-export default withRouter(AuthPage);
+export default AuthPage;

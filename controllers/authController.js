@@ -2,20 +2,22 @@ const {promisify} = require('util');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
 const signToken = id => {
     return jwt.sign({id}, config.get('jwtSecret'), {expiresIn: config.get('jwtExpiresIn')});
 };
 
-exports.signin = async (req, res, next) => {
+exports.signin = catchAsync(async (req, res, next) => {
     const {email, password} = req.body;
     if (!email || !password) {
-        return res.status(400).json({message: 'Please provide email and password!'})
+        return next(new AppError('Please provide email and password!', 400));
     }
 
     const user = await User.findOne({email}).select('+password');
     if (!user || !await user.checkPwd(password, user.password)) {
-        return res.status(401).json({message: 'Incorrect email or password.'})
+        return next(new AppError('Incorrect email or password', 401));
     }
 
     const token = signToken(user._id);
@@ -23,29 +25,22 @@ exports.signin = async (req, res, next) => {
         status: 'success',
         token
     })
-};
+});
 
-exports.signup = async (req, res, next) => {
-    try {
-        console.log(req.body)
-        const {email, password, passwordConfirm} = req.body;
-        const newUser = await User.create({email, password, passwordConfirm});
+exports.signup = catchAsync(async (req, res, next) => {
+    const {email, password, passwordConfirm} = req.body;
+    const newUser = await User.create({email, password, passwordConfirm});
 
-        const token = signToken(newUser._id);
+    const token = signToken(newUser._id);
 
-        res.status(201).json({
-            status: 'success',
-            token,
-            user: newUser
-        });
-    } catch (e) {
-        res.status(500).json({
-            message: e
-        })
-    }
-};
+    res.status(201).json({
+        status: 'success',
+        token,
+        user: newUser
+    });
+});
 
-exports.protect = async (req, res, next) => {
+exports.protect = catchAsync(async (req, res, next) => {
     let token;
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -53,11 +48,18 @@ exports.protect = async (req, res, next) => {
     }
 
     if (!token) {
-        res.status(401).json({
-            message: 'You are not logged in.'
-        })
+        return next(
+            new AppError('You are not logged in! Please log in to get access.', 401)
+        );
     }
 
-    const decoded = await promisify(jwt.verify)(token, config.get('jwt_secret'));
+    const decoded = await promisify(jwt.verify)(token, config.get('jwtSecret'));
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+        return next(
+            new AppError('The user belonging to this token does no longer exist.', 401)
+        );
+    }
+    req.user = currentUser;
     next();
-};
+});

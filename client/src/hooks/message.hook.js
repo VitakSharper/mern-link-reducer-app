@@ -1,13 +1,13 @@
 import React, {useCallback} from 'react';
 
-import MessageHook from "./Message";
+import MessageComponent from "./Message.component";
 
 const useMessage = ({error}) => {
+    console.log('Component: ', error)
     return useCallback(text => {
         if (text) {
-            console.log('useMessage: ', text)
             return (
-                <MessageHook/>
+                <MessageComponent/>
             )
         }
     }, [])

@@ -14,7 +14,7 @@ export const useHttp = () => {
             const resp = await fetch(url, {method, body, headers});
             const data = await resp.json();
             if (!resp.ok) {
-                throw new Error(data.message.message || data.message.errmsg)
+                throw new Error(data.message.message || data.message.errmsg || data.message)
             }
             setLoading(false);
             setMessage('User created successful.');

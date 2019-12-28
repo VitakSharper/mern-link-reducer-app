@@ -4,6 +4,7 @@ import jwtDecode from 'jwt-decode';
 const useAuth = () => {
     const [token, setToken] = useState(null);
     const [userId, setUserId] = useState(null);
+    const [ready, setReady] = useState(false);
 
 
     const signin = useCallback((jwtToken) => {
@@ -25,9 +26,10 @@ const useAuth = () => {
         if (data && data.token) {
             signin(data.token);
         }
+        setReady(true);
     }, [signin]);
 
-    return {signin, signout, token, userId};
+    return {signin, signout, token, userId, ready};
 };
 
 export default useAuth;

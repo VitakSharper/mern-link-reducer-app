@@ -1,7 +1,8 @@
 import React from 'react'
 import {Message} from 'semantic-ui-react'
 
-const MessageHook = ({message}) => {
+const MessageComponent = ({message}) => {
+    console.log('Message: ', message)
     return (
         <Message negative>
             <Message.Header>Error</Message.Header>
@@ -10,4 +11,4 @@ const MessageHook = ({message}) => {
     )
 };
 
-export default MessageHook
+export default MessageComponent

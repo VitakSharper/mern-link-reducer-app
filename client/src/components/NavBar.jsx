@@ -34,7 +34,7 @@ const NavBar = () => {
         <Menu fixed={"top"} borderless style={menuBar}>
             <Container text>
                 <Menu.Item>
-                    <img src="/assets/logo.png" alt="logo"/>
+                    <Icon circular inverted name='linkify'/>
                 </Menu.Item>
                 <Menu.Item header>
                     Link Reducer

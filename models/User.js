@@ -27,8 +27,8 @@ const schema = new Schema({
             },
             message: 'Password are not the same.'
         }
-    }
-    // links: [{type: Types.ObjectId, ref: 'Link'}]
+    },
+    links: [{type: Types.ObjectId, ref: 'Link'}]
 });
 
 schema.pre('save', async function (next) {

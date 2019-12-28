@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {withRouter} from 'react-router-dom';
 import {Grid, Segment, Form, Input, Button, Label} from "semantic-ui-react";
 import {useHttp} from "../hooks/http.hook";
-import MessageHook from "../hooks/Message";
+import MessageHook from "../hooks/Message.component";
 
 const classes = {
     segment: {
